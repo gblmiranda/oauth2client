@@ -100,7 +100,13 @@ def validate_token(key, token, user_id, action_id="", current_time=None):
         return False
 
     # Perform constant time comparison to avoid timing attacks
+    if isinstance(token, str):
+        zipped_tokens = zip(bytearray(token, 'utf-8'),
+                            bytearray(expected_token))
+    else:
+        zipped_tokens = zip(bytearray(token), bytearray(expected_token))
+
     different = 0
-    for x, y in zip(bytearray(token, 'utf-8'), bytearray(expected_token)):
+    for x, y in zipped_tokens:
         different |= x ^ y
     return not different
