@@ -18,6 +18,7 @@ import base64
 import unittest
 
 import mock
+import six
 
 from oauth2client._helpers import _to_bytes
 from oauth2client.contrib import xsrfutil
@@ -288,6 +289,17 @@ class XsrfUtilTests(unittest.TestCase):
                                                  None,
                                                  TEST_USER_ID_1,
                                                  action_id=TEST_ACTION_ID_1))
+
+        # When the token is a string
+        if six.PY2:
+            str_token = str(token)
+        elif six.PY3:
+            str_token = token.decode('utf-8')
+
+        self.assertTrue(xsrfutil.validate_token(TEST_KEY,
+                                                str_token,
+                                                TEST_USER_ID_1,
+                                                action_id=TEST_ACTION_ID_1))
 
 
 if __name__ == '__main__':  # pragma: NO COVER
